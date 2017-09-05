@@ -1,13 +1,17 @@
 import ply.lex as lex
 from sys import stdin
 
-tokens = ('NEWLINE', 'CHARACTER')
+tokens = ('NEWLINE', 'CHARACTER', 'DIGIT')
 
 
 def t_NEWLINE(t):
     r'\n'
     return t
 
+#after newline as those can break up numbers, before CHARACTER
+def t_DIGIT(t):
+    r'[0-9]'
+    return t
 
 def t_CHARACTER(t):
     r'.'
