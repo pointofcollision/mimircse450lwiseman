@@ -1,33 +1,48 @@
+#PROJECT 0
+#! /usr/bin/env python3
 import ply.lex as lex
 from sys import stdin
 
-tokens = ('NEWLINE', 'CHARACTER', 'DIGIT')
+words = {
+  'cat' : 'NOUN', 
+  'ferret' : 'NOUN',  
+  'dog' : 'NOUN', 
+  'human' : 'NOUN', 
+  'MSU' : 'NOUN', 
+  'Daenerys' : 'NOUN', 
+  'Ghost' : 'NOUN', 
+  'Josh' : 'NOUN', 
+  'you' : 'NOUN',
+  'is' : 'VERB',
+  'chases' : 'VERB',
+  'loves' : 'VERB'
+}
 
+tokens = ['UNKNOWN', 'PUNCTUATION', 'WHITESPACE'] + list(set(words.values()))
 
-def t_NEWLINE(t):
-    r'\n'
-    return t
+def t_PUNCTUATION(t):
+  r'!'
+  return t
 
-#after newline as those can break up numbers, before CHARACTER
-def t_DIGIT(t):
-    r'[0-9]'
-    return t
-
-def t_CHARACTER(t):
-    r'.'
-    return t
-
+def t_UNKNOWN(t):
+  r'[^( \t\n!)]+'
+  t.type = words.get(t.value,'UNKNOWN')
+  return t
+    
+def t_WHITESPACE(t): 
+  r'[ \t\n]'
+  return t
 
 def t_error(t):
-    pass
+  pass
 
 
-data = '''3 + 4 * 10
-129 + 32
+data = '''is loves !!! chases Ghost! ferretjosh piexD%%% house Mouse MOuse2
 '''
 
 
 # Build the lexer
+#if __name__ == "__main__": no idea what this line does
 lexer = lex.lex()
 
 # Give the lexer some input
@@ -39,7 +54,8 @@ while True:
     tok = lexer.token()
     if not tok:
         break  # No more input
-    if tok.type == 'NEWLINE':
-        print(tok.type)
+    if tok.type == 'WHITESPACE':
+        print(tok.type + " (" + tok.value + ")")
     else:
-        print(tok.value, tok.type)
+        print(tok.type + " (" + tok.value + ")")
+
