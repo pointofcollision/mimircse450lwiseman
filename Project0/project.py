@@ -1,6 +1,7 @@
-#PROJECT 0
+#project0 version
 #! /usr/bin/env python3
 import ply.lex as lex
+import sys
 from sys import stdin
 import fileinput
 
@@ -90,7 +91,7 @@ def t_WHITESPACE(t):
 
 #method for unknown remainders, random symbols, whatever
 def t_UNKNOWN(t):
-    r'.+'
+    r'.'
     return t
   
 def t_error(t):
@@ -110,31 +111,44 @@ variable_name print var char random
 
 
 # Build the lexer
-#if __name__ == "__main__": no idea what this line does
-lexer = lex.lex()
-
-# Give the lexer some input
-#re-enable once we want that
-input_str = ""
-for line in fileinput.input():
-    if line[0]!="#":
-        linecount+=1
-    input_str+=line
-lexer.input(input_str)
-
-
-# Tokenize
-while True:
-    tok = lexer.token()
-    if not tok:
-        break  # No more input
-    if tok.type == 'WHITESPACE':
-        continue
-    if tok.type == 'UNKNOWN':
-        print(tok.type + ": " + tok.value)
-        break
-    if tok.type =='COMMENT':
-        continue
-    else:
-        print(tok.type + ": " + tok.value)
-print("Line Count: " + str(linecount))
+if __name__ == "__main__": 
+    #no idea what this line does
+    lexer = lex.lex()
+    
+    # Give the lexer some input
+    #re-enable once we want that
+    input_str = ""
+    for line in fileinput.input():
+        #print(line)
+        #if line[0]!="#":
+        #    linecount+=1
+        input_str+=line
+    input_array = input_str.split("\n")
+    #print(str(len(input_array)))
+    linecount = len(input_array)-1
+    lexer.input(input_str)
+    
+    
+    # Tokenize
+    linenumber = 0;
+    while linenumber<(len(input_array)):
+        #print(linenumber)
+        lexer.input(input_array[linenumber])
+        linenumber+=1
+        while True:
+            tok = lexer.token()
+            if not tok:
+                break  # No more input
+            if tok.type == 'WHITESPACE':
+                continue
+            if tok.type == 'UNKNOWN':
+                print("Unknown token on line " + str(linenumber) + ": " 
+                + tok.value)
+                sys.exit()
+                #print(tok.type + ": " + tok.value)
+                break
+            if tok.type =='COMMENT':
+                continue
+            else:
+                print(tok.type + ": " + tok.value)
+    print("Line Count: " + str(linecount))
